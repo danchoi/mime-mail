@@ -27,6 +27,20 @@ Library
                  , text                >= 0.7
                  , filepath            >= 1.2
 
+executable mmail
+  build-depends:   mime-mail
+                 , base >= 4
+                 , aeson               >= 0.8.0
+                 , base64-bytestring   >= 0.1
+                 , process             >= 1.0
+                 , random              >= 1.0
+                 , blaze-builder       >= 0.2.1      && < 0.4
+                 , bytestring          >= 0.9.1
+                 , text                >= 0.7
+                 , filepath            >= 1.2
+
+  main-is: Main.hs
+  
 test-suite tests
     type: exitcode-stdio-1.0
     main-is: Spec.hs

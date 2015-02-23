@@ -400,7 +400,7 @@ simpleMail' to from subject body = addPart [plainPart body]
 -- the @src="cid:{{CONTENT-ID}}"@ syntax, where CONTENT-ID is
 -- the filename of the image.
 
-simpleMailWithImages :: Address -- ^ to
+simpleMailWithImages :: [Address] -- ^ to
            -> Address -- ^ from
            -> Text -- ^ subject
            -> LT.Text -- ^ plain body
@@ -408,13 +408,12 @@ simpleMailWithImages :: Address -- ^ to
            -> [(Text, FilePath)] -- ^ content type and path of inline images
            -> [(Text, FilePath)] -- ^ content type and path of attachments
            -> IO Mail
-
-simpleMailWithImages to from subject plainBody htmlBody images attachments = do
+simpleMailWithImages toMany from subject plainBody htmlBody images attachments = do
     (addAttachments attachments 
       <=< addImages images)
       . addPart [ plainPart plainBody
                 , relatedPart [htmlPart htmlBody]]
-      $ mailFromToSubject from to subject
+      $ (emptyMail from) { mailTo = toMany , mailHeaders = [("Subject", subject)] }
 
 mailFromToSubject :: Address -- ^ from
                   -> Address -- ^ to
