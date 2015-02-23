@@ -7,14 +7,16 @@ import Control.Applicative
 import qualified Data.Yaml as Y
 import Data.Aeson
 import Data.ByteString as B
+import qualified Data.ByteString.Lazy.Char8 as BL
 import Data.Monoid
+import qualified Data.Text.Lazy as LT
 
 data MailData = MailData {
     sender :: Address
   , recipients :: [Address]
   , subject :: Text
-  , plainBody :: Text
-  , htmlHtml :: Text
+  , plainBody :: LT.Text
+  , htmlBody :: LT.Text
   , inlineImages :: [(Text, FilePath)]
   , attachments :: [(Text, FilePath)]
   } deriving Show
@@ -29,7 +31,7 @@ instance FromJSON MailData where
       <*> v .: "plain"
       <*> v .: "html"
       <*> ((mapM parseFileRef =<< v .: "images") <|> pure [])
-      <*> (v .: "attachments" <|> pure [])
+      <*> ((mapM parseFileRef =<< v .: "attachments") <|> pure [])
   parseJSON _ = mempty
 
 instance FromJSON Address where
@@ -47,6 +49,9 @@ parseFileRef (Object v) = do
 main = do
   x <- B.getContents 
   let mail :: MailData
-      mail = either error id 
+      mail@MailData{..}  = either error id 
                 $ Y.decodeEither x
-  print mail
+  r <- simpleMailWithImages 
+      recipients sender
+      subject plainBody htmlBody inlineImages attachments
+  renderMail' r >>= BL.putStrLn
