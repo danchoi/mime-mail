@@ -10,6 +10,8 @@ subject: hello
 plain: hello world
 html: |
   <h1>Hello World</h1>
+  Embedded here <img src="cid:cat.jpg"/>
+  Yay
 images: 
   - path: cat.jpg
     mime_type: image/jpeg
