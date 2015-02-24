@@ -463,7 +463,7 @@ addAttachments xs mail = foldM fun mail xs
 
 -- | Add an inline image from a file and construct a 'Part'.
 addImage :: (Text, FilePath) -> IO Part
-addImage (ct,fn) = do
+addImage (ct,fn = do
     content <- L.readFile fn
     return 
       $ Part ct Base64 (InlineDisposition $ T.pack (takeFileName fn)) [] (PartContent content)
